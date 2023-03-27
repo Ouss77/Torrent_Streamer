@@ -1,12 +1,27 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+
+
+
+
 
 export function ListingMovies({ setMovie, movie, setInput, input }) {
     const navigate = useNavigate()
 
-    const [favori, setFavori] = useState([]);
+    const [favmovie, setFavMovie] = useState([]);
 
+    useEffect(() => {
+        axios.get("http://localhost:3005/movies")
+        .then(response => {
+            setFavMovie(response.data)
+        })
+    }, [movie])
+
+
+    // const [favori, setFavori] = useState([]);
+    console.log(favmovie);
     function handleChange(e) {
         setInput(e.target.value)
     }
@@ -23,14 +38,15 @@ export function ListingMovies({ setMovie, movie, setInput, input }) {
                 "year": m.date,
                 "url": m.poster_path
             })
-            .then(res=>console.log(res) , 
-            navigate("/favori")           
+            .then(res => console.log(res),
+            setMovie([...movie])
+            
             )
-            .catch(err=>console.log(err))
+            .catch(err => console.log(err))
     }
 
     return (
-        <div className="flex flex-col items-center ">
+        <div className="flex flex-col items-center  my-8">
             <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
             <div class="flex space-x-11 mb-3">
 
@@ -46,12 +62,20 @@ export function ListingMovies({ setMovie, movie, setInput, input }) {
                     }
                     return (
                         <div key={m.id}>
-                            <img
-                                className="rounded-xl cursor-pointer h-[450px]" onDoubleClick={() => handleDoubleClick(m)}
-                                src={"https://image.tmdb.org/t/p/w500" + m.poster_path}
-                                alt={m.original_title}
-                            />
-                            <h2 className="text-center">{m.original_title}</h2>
+                            <div>
+                                <img
+                                    className="rounded-xl cursor-pointer h-[450px]" onClick={() => handleDoubleClick(m)}
+                                    src={"https://image.tmdb.org/t/p/w500" + m.poster_path}
+                                    alt={m.original_title}
+                                />
+                                <h2 className="text-center">{m.original_title}</h2>
+                            </div>
+                            <div>
+                                {/* heart icon color changing */}
+                                {favmovie.find(movie => movie.title === m.original_title && movie.url === m.poster_path) ? <AiFillHeart /> : <AiOutlineHeart />
+                                }
+                            </div>
+
                         </div>
                     );
                 })}

@@ -1,13 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from 'axios'
 export function FavoriteMovies() {
     
     const [movie, setMovie] = useState([]);
-
-        axios.get("http://localhost:3005/movies")
-            .then(response => {
-                setMovie(response.data)
-            })
+    useEffect(()=>{ axios.get("http://localhost:3005/movies")
+    .then(response => {
+        setMovie(response.data)
+    })},[])
+       
     
     return (
         
